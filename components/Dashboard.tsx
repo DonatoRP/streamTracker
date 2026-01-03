@@ -11,7 +11,7 @@ interface DashboardProps {
 }
 
 export const Dashboard: React.FC<DashboardProps> = ({ stats }) => {
-  const sortedPlatforms = Object.entries(stats.platformDistribution)
+  const sortedPlatforms = (Object.entries(stats.platformDistribution) as [string, number][])
     .sort(([, a], [, b]) => b - a)
     .filter(([, count]) => count > 0);
 
