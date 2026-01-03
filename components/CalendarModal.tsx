@@ -36,8 +36,7 @@ export const CalendarModal: React.FC<CalendarModalProps> = ({
   };
 
   const handleDeleteClick = (id: string) => {
-    // Explicitly use window.confirm
-    if (window.confirm('Are you sure you want to delete this stream record?')) {
+    if (window.confirm('¿Estás seguro de que quieres eliminar este registro?')) {
       onDeleteStream(id);
     }
   };
@@ -64,9 +63,9 @@ export const CalendarModal: React.FC<CalendarModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-slate-700 bg-slate-900/50">
           <h2 className="text-lg font-bold text-white">
-            {mode === 'list' && new Date(date + 'T00:00:00').toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
-            {mode === 'add' && 'Add Stream'}
-            {mode === 'edit' && 'Edit Stream'}
+            {mode === 'list' && new Date(date + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'short', month: 'short', day: 'numeric' })}
+            {mode === 'add' && 'Agregar Stream'}
+            {mode === 'edit' && 'Editar Stream'}
           </h2>
           <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors">
             <X size={20} />
@@ -84,7 +83,7 @@ export const CalendarModal: React.FC<CalendarModalProps> = ({
                   className="flex items-center px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-md transition-colors"
                 >
                   <Plus size={14} className="mr-1" />
-                  Add
+                  Agregar
                 </button>
               </div>
               <StreamList 

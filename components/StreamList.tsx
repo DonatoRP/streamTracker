@@ -9,11 +9,20 @@ interface StreamListProps {
   onDelete: (id: string) => void;
 }
 
+// Helper to format decimal hours to "1h 30m"
+const formatDuration = (decimalHours: number) => {
+  const h = Math.floor(decimalHours);
+  const m = Math.round((decimalHours - h) * 60);
+  if (h > 0 && m > 0) return `${h}h ${m}m`;
+  if (h > 0) return `${h}h`;
+  return `${m}m`;
+};
+
 export const StreamList: React.FC<StreamListProps> = ({ streams, onEdit, onDelete }) => {
   if (streams.length === 0) {
     return (
       <div className="text-center py-8 text-slate-500">
-        <p>No streams recorded for this day.</p>
+        <p>No hay streams registrados este día.</p>
       </div>
     );
   }
@@ -40,7 +49,7 @@ export const StreamList: React.FC<StreamListProps> = ({ streams, onEdit, onDelet
                   onEdit(stream); 
                 }}
                 className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-md transition-colors cursor-pointer"
-                title="Edit"
+                title="Editar"
               >
                 <Edit2 size={16} />
               </button>
@@ -52,7 +61,7 @@ export const StreamList: React.FC<StreamListProps> = ({ streams, onEdit, onDelet
                   onDelete(stream.id); 
                 }}
                 className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-slate-800 rounded-md transition-colors cursor-pointer"
-                title="Delete"
+                title="Eliminar"
               >
                 <Trash2 size={16} />
               </button>
@@ -62,11 +71,11 @@ export const StreamList: React.FC<StreamListProps> = ({ streams, onEdit, onDelet
           <div className="grid grid-cols-2 gap-4 mb-2">
             <div className="flex items-center text-slate-400 text-sm">
               <Users size={14} className="mr-1.5" />
-              <span>{stream.viewers} avg viewers</span>
+              <span>{stream.viewers} media</span>
             </div>
             <div className="flex items-center text-slate-400 text-sm">
               <Clock size={14} className="mr-1.5" />
-              <span>{stream.duration} hrs</span>
+              <span>{formatDuration(stream.duration)}</span>
             </div>
           </div>
 

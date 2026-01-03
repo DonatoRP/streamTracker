@@ -71,7 +71,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ streams, onDayClick 
                </div>
              ))}
              {dayStreams.length > 2 && (
-               <div className="text-xs text-slate-500 pl-3">+{dayStreams.length - 2} more</div>
+               <div className="text-xs text-slate-500 pl-3">+{dayStreams.length - 2} más</div>
              )}
              <div className="absolute bottom-2 right-2 text-xs font-mono text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">
                 {Math.round(totalViewers / dayStreams.length)} avg
@@ -86,8 +86,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ streams, onDayClick 
     <div className="bg-slate-900 rounded-xl border border-slate-700 overflow-hidden animate-in fade-in duration-500">
       {/* Calendar Header */}
       <div className="flex items-center justify-between p-4 border-b border-slate-700 bg-slate-800">
-        <h2 className="text-xl font-bold text-white">
-          {currentDate.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}
+        <h2 className="text-xl font-bold text-white capitalize">
+          {currentDate.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}
         </h2>
         <div className="flex space-x-2">
           <button onClick={handlePrevMonth} className="p-2 hover:bg-slate-700 rounded-lg text-slate-300 transition-colors">
@@ -101,7 +101,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ streams, onDayClick 
 
       {/* Days Header */}
       <div className="grid grid-cols-7 border-b border-slate-700 bg-slate-800/50">
-        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+        {['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].map(day => (
           <div key={day} className="py-2 text-center text-sm font-semibold text-slate-500">
             {day}
           </div>

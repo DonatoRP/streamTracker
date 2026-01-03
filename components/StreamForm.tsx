@@ -17,37 +17,55 @@ export const StreamForm: React.FC<StreamFormProps> = ({
   onCancel,
   isSubmitting = false
 }) => {
-  const [formData, setFormData] = useState<StreamFormData>({
+  // Internal state for split time inputs
+  const [durationHours, setDurationHours] = useState('');
+  const [durationMinutes, setDurationMinutes] = useState('');
+
+  const [formData, setFormData] = useState<Omit<StreamFormData, 'duration'>>({
     platform: 'Twitch',
     viewers: '',
-    duration: '',
     note: ''
   });
 
-  const [errors, setErrors] = useState<Partial<Record<keyof StreamFormData, string>>>({});
+  const [errors, setErrors] = useState<Partial<Record<keyof StreamFormData | 'durationMinutes', string>>>({});
 
   useEffect(() => {
     if (initialData) {
       setFormData({
         platform: initialData.platform,
         viewers: initialData.viewers.toString(),
-        duration: initialData.duration.toString(),
         note: initialData.note
       });
+
+      // Convert decimal hours back to hours and minutes for editing
+      const totalHours = initialData.duration;
+      const h = Math.floor(totalHours);
+      const m = Math.round((totalHours - h) * 60);
+      
+      setDurationHours(h.toString());
+      setDurationMinutes(m.toString());
     }
   }, [initialData]);
 
   const validate = (): boolean => {
-    const newErrors: Partial<Record<keyof StreamFormData, string>> = {};
+    const newErrors: any = {};
     let isValid = true;
 
-    if (!formData.viewers || parseFloat(formData.viewers) <= 0) {
-      newErrors.viewers = "Viewers must be a positive number";
+    if (!formData.viewers || parseFloat(formData.viewers) < 0) {
+      newErrors.viewers = "Espectadores debe ser un número positivo";
       isValid = false;
     }
 
-    if (!formData.duration || parseFloat(formData.duration) <= 0) {
-      newErrors.duration = "Duration must be positive (e.g. 1.5)";
+    const h = parseFloat(durationHours || '0');
+    const m = parseFloat(durationMinutes || '0');
+
+    if (h === 0 && m === 0) {
+      newErrors.duration = "La duración debe ser mayor a 0";
+      isValid = false;
+    }
+
+    if (h < 0 || m < 0) {
+      newErrors.duration = "El tiempo no puede ser negativo";
       isValid = false;
     }
 
@@ -58,21 +76,29 @@ export const StreamForm: React.FC<StreamFormProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
-      onSubmit(formData);
+      // Convert hours and minutes to decimal hours for storage
+      const h = parseFloat(durationHours || '0');
+      const m = parseFloat(durationMinutes || '0');
+      const decimalDuration = h + (m / 60);
+
+      onSubmit({
+        ...formData,
+        duration: decimalDuration.toString()
+      });
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-slate-300 mb-1">Date</label>
+        <label className="block text-sm font-medium text-slate-300 mb-1">Fecha</label>
         <div className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-md text-slate-400 cursor-not-allowed">
-          {new Date(selectedDate).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+          {new Date(selectedDate).toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
         </div>
       </div>
 
       <div>
-        <label htmlFor="platform" className="block text-sm font-medium text-slate-300 mb-1">Platform</label>
+        <label htmlFor="platform" className="block text-sm font-medium text-slate-300 mb-1">Plataforma</label>
         <select
           id="platform"
           value={formData.platform}
@@ -85,9 +111,9 @@ export const StreamForm: React.FC<StreamFormProps> = ({
         </select>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label htmlFor="viewers" className="block text-sm font-medium text-slate-300 mb-1">Avg. Viewers</label>
+          <label htmlFor="viewers" className="block text-sm font-medium text-slate-300 mb-1">Media de Viewers</label>
           <input
             type="number"
             id="viewers"
@@ -95,35 +121,50 @@ export const StreamForm: React.FC<StreamFormProps> = ({
             value={formData.viewers}
             onChange={(e) => setFormData({ ...formData, viewers: e.target.value })}
             className={`w-full px-3 py-2 bg-slate-900 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 ${errors.viewers ? 'border-red-500' : 'border-slate-700'}`}
-            placeholder="e.g. 25"
+            placeholder="ej. 25"
           />
           {errors.viewers && <p className="text-red-500 text-xs mt-1">{errors.viewers}</p>}
         </div>
 
         <div>
-          <label htmlFor="duration" className="block text-sm font-medium text-slate-300 mb-1">Duration (Hours)</label>
-          <input
-            type="number"
-            id="duration"
-            step="0.1"
-            value={formData.duration}
-            onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
-            className={`w-full px-3 py-2 bg-slate-900 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 ${errors.duration ? 'border-red-500' : 'border-slate-700'}`}
-            placeholder="e.g. 2.5"
-          />
+          <label className="block text-sm font-medium text-slate-300 mb-1">Duración</label>
+          <div className="flex space-x-2">
+            <div className="flex-1">
+              <input
+                type="number"
+                min="0"
+                value={durationHours}
+                onChange={(e) => setDurationHours(e.target.value)}
+                className={`w-full px-3 py-2 bg-slate-900 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 ${errors.duration ? 'border-red-500' : 'border-slate-700'}`}
+                placeholder="Horas"
+              />
+            </div>
+            <span className="self-center text-slate-400">:</span>
+            <div className="flex-1">
+              <input
+                type="number"
+                min="0"
+                max="59"
+                value={durationMinutes}
+                onChange={(e) => setDurationMinutes(e.target.value)}
+                className={`w-full px-3 py-2 bg-slate-900 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 ${errors.duration ? 'border-red-500' : 'border-slate-700'}`}
+                placeholder="Min"
+              />
+            </div>
+          </div>
           {errors.duration && <p className="text-red-500 text-xs mt-1">{errors.duration}</p>}
         </div>
       </div>
 
       <div>
-        <label htmlFor="note" className="block text-sm font-medium text-slate-300 mb-1">Note (Optional)</label>
+        <label htmlFor="note" className="block text-sm font-medium text-slate-300 mb-1">Nota (Opcional)</label>
         <textarea
           id="note"
           rows={3}
           value={formData.note}
           onChange={(e) => setFormData({ ...formData, note: e.target.value })}
           className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
-          placeholder="What went well? What didn't?"
+          placeholder="¿Qué salió bien? ¿Qué falló?"
         />
       </div>
 
@@ -133,14 +174,14 @@ export const StreamForm: React.FC<StreamFormProps> = ({
           onClick={onCancel}
           className="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors"
         >
-          Cancel
+          Cancelar
         </button>
         <button
           type="submit"
           disabled={isSubmitting}
           className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-md shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {initialData ? 'Update Stream' : 'Add Stream'}
+          {initialData ? 'Actualizar' : 'Guardar'}
         </button>
       </div>
     </form>

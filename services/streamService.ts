@@ -16,8 +16,8 @@ const initDB = () => {
   const existing = localStorage.getItem(MOCK_INITIAL_DATA_KEY);
   if (!existing) {
     const initialData: Stream[] = [
-      { id: '1', date: getLocalDateString(0), platform: 'Twitch', viewers: 45, duration: 3.5, note: 'Great raid!' },
-      { id: '2', date: getLocalDateString(-2), platform: 'YouTube', viewers: 120, duration: 2, note: 'Tech issues at start.' },
+      { id: '1', date: getLocalDateString(0), platform: 'Twitch', viewers: 45, duration: 3.5, note: '¡Gran raid!' },
+      { id: '2', date: getLocalDateString(-2), platform: 'YouTube', viewers: 120, duration: 2, note: 'Problemas técnicos al inicio.' },
     ];
     localStorage.setItem(MOCK_INITIAL_DATA_KEY, JSON.stringify(initialData));
   }

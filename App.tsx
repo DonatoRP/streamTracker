@@ -77,7 +77,7 @@ const App: React.FC = () => {
   };
 
   if (loading) {
-    return <div className="min-h-screen bg-slate-950 flex items-center justify-center text-indigo-500">Loading Tracker...</div>;
+    return <div className="min-h-screen bg-slate-950 flex items-center justify-center text-indigo-500">Cargando Tracker...</div>;
   }
 
   return (
@@ -104,7 +104,7 @@ const App: React.FC = () => {
                 }`}
               >
                 <LayoutDashboard size={18} className="mr-2" />
-                Dashboard
+                Panel
               </button>
               <button
                 onClick={() => setActiveTab('calendar')}
@@ -115,7 +115,7 @@ const App: React.FC = () => {
                 }`}
               >
                 <CalendarIcon size={18} className="mr-2" />
-                Calendar
+                Calendario
               </button>
             </div>
           </div>
