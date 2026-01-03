@@ -1,5 +1,5 @@
 import React from 'react';
-import { Stream, Platform } from '../types';
+import { Stream } from '../types';
 import { Trash2, Edit2, Clock, Users } from 'lucide-react';
 import { PLATFORM_COLORS } from '../constants';
 

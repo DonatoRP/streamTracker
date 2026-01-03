@@ -1,5 +1,5 @@
 import { Stream, GlobalStats, Platform } from '../types';
-import { MOCK_INITIAL_DATA_KEY, PLATFORMS } from '../constants';
+import { MOCK_INITIAL_DATA_KEY } from '../constants';
 
 // Helper to generate IDs
 const generateId = () => Math.random().toString(36).substring(2, 9);
@@ -74,7 +74,6 @@ export const calculateStats = (streams: Stream[]): GlobalStats => {
   });
 
   // Calculate daily viewers for the chart (last 30 days)
-  const today = new Date();
   const dailyViewersMap = new Map<string, number>();
   
   // Sort streams by date
